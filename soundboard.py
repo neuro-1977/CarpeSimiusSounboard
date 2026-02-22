@@ -367,7 +367,15 @@ class Soundboard:
     def on_dev_sel(self, name): self.init_mixer(name)
 
     def get_devices(self):
-        try: return sdl2_audio.get_audio_device_names(False) or ["System Default"]
+        try: 
+            devices = sdl2_audio.get_audio_device_names(False) or ["System Default"]
+            # Check for Stereo Mix or similar built-in alternatives
+            stereo_mix_found = any("stereo mix" in d.lower() or "what u hear" in d.lower() or 
+                                  "wave out mix" in d.lower() for d in devices)
+            if not stereo_mix_found:
+                # Stereo Mix might be disabled - add note to help modal
+                pass
+            return devices
         except: return ["System Default"]
 
     def init_mixer(self, name):
